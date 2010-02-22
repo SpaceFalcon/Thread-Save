@@ -1,0 +1,1 @@
+On image 404: Infinite loop of retries. Check for 404 before re-entering job queue. FIXED 10/30/09

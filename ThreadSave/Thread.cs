@@ -1,5 +1,5 @@
 ﻿/* File Created: 10/4/2009
- * Last Modified: 10/6/2009
+ * Last Modified: 3/23/2010
  * 
  * This file is part of ThreadSave.
  * 
@@ -36,6 +36,8 @@ namespace ThreadSave
         List<string> m_DownloadedFiles = new List<string>();
         Queue<string> m_QueuedFiles = new Queue<string>();
         bool m_isdead = false;
+
+        Board board = null;
 
         /// <summary>
         /// URL's of all downloaded files.
@@ -91,7 +93,7 @@ namespace ThreadSave
         {
             get
             {
-                return m_StorageDir + "\\" + ThreadNumber;
+                return m_StorageDir;
             }
         }
 
@@ -106,9 +108,30 @@ namespace ThreadSave
         public Thread(string ThreadURL)
         {
             this.ThreadURL = ThreadURL;
-            ThreadNumber = ThreadURL.Split("/".ToCharArray())[5].Split(".".ToCharArray())[0];
+            ThreadNumber = StripHash(ThreadURL.Split("/".ToCharArray())[5].Split(".".ToCharArray())[0]);
             System.IO.Directory.CreateDirectory(StoragePath);
+            string boardname = Config.GetBoardName(ThreadURL);
+            foreach (Board parent in Config.boards)
+            {
+                if (parent.BoardName == boardname) board = parent;
+            }
+            if (board == null) System.Windows.Forms.MessageBox.Show("There is no chandef for this board, downloading will not work properly.",
+                                                                    "Error",
+                                                                    System.Windows.Forms.MessageBoxButtons.OK,
+                                                                    System.Windows.Forms.MessageBoxIcon.Error);
+            if(board != null) m_StorageDir = System.IO.Path.Combine(Configuration.StorageDirectory, board.StorageDir.Replace("{threadno}", ThreadNumber));
             Scan();
+        }
+
+        private string StripHash(string threadno)
+        {
+            int hashIndex = threadno.IndexOf('#', 0);
+            if (hashIndex > 0)
+            {
+                return threadno.Remove(hashIndex);
+            }
+            else
+                return threadno;
         }
 
         /// <summary>
@@ -124,8 +147,8 @@ namespace ThreadSave
                 Source = SourceStream.Encoding.GetString(SourceStream.GetAllData());
             else
                 return;
-
-            System.Text.RegularExpressions.Regex ImageRegex = new System.Text.RegularExpressions.Regex("http://images\\.4chan\\.org/b/src/[0-9]+\\.[\\w]{3}");
+            if (board == null) return;
+            System.Text.RegularExpressions.Regex ImageRegex = new System.Text.RegularExpressions.Regex(board.ImageRegex);
             System.Text.RegularExpressions.Match ImageMatch = ImageRegex.Match(Source);
 
             while (ImageMatch.Success)
@@ -143,6 +166,7 @@ namespace ThreadSave
 
         private void SaveHTML()
         {
+            if (!System.IO.Directory.Exists(StoragePath)) System.IO.Directory.CreateDirectory(StoragePath);
             System.IO.StreamWriter SourceWriter = new System.IO.StreamWriter(StoragePath + "\\" + ThreadNumber + ".html");
             SourceWriter.Write(Source);
             SourceWriter.Close();

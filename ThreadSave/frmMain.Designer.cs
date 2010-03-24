@@ -54,6 +54,7 @@
             this.btnShowDownloaders = new System.Windows.Forms.Button();
             this.ActionLog = new System.Windows.Forms.ListBox();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.tsappStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.StatusStrip.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.stPreviewImage)).BeginInit();
@@ -93,7 +94,8 @@
             // StatusStrip
             // 
             this.StatusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.appStatus});
+            this.appStatus,
+            this.tsappStatus});
             this.StatusStrip.Location = new System.Drawing.Point(0, 303);
             this.StatusStrip.Name = "StatusStrip";
             this.StatusStrip.Size = new System.Drawing.Size(667, 22);
@@ -311,6 +313,11 @@
             this.panel2.Size = new System.Drawing.Size(457, 303);
             this.panel2.TabIndex = 10;
             // 
+            // tsappStatus
+            // 
+            this.tsappStatus.Name = "tsappStatus";
+            this.tsappStatus.Size = new System.Drawing.Size(0, 17);
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -360,6 +367,7 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.ToolStripStatusLabel tsappStatus;
     }
 }
 

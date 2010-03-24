@@ -1,5 +1,5 @@
 ﻿/* File Created: 10/4/2009
- * Last Modified: 10/6/2009
+ * Last Modified: 3/23/2010
  * 
  * This file is part of ThreadSave.
  * 
@@ -35,7 +35,7 @@ namespace ThreadSave
         public string[] ConcurrentOperationsString = new string[Configuration.MaxThreads];
         public string[] ConcurrentOperationsCurrentJob = new string[Configuration.MaxThreads];
         public List<string> JobLog = new List<string>();
-
+        
         Thread currentThread;
         DateTime currentTime = DateTime.Now;
         int previewImageIndex = 0;
@@ -56,6 +56,7 @@ namespace ThreadSave
                 newThread.RunWorkerCompleted += new RunWorkerCompletedEventHandler(Thread_ExecutionComplete);
                 ConcurrentOperations.Add(newThread);
             }
+            Config.LoadFile("ThreadSave.cfg");
         }
 
         bool ThreadsBusy()
@@ -162,9 +163,16 @@ namespace ThreadSave
 
         private void btnStart_Click(object sender, EventArgs e)
         {
-            currentThread = new Thread(txtThreadUrl.Text);
-            tSecond.Start();
-            ExecuteAllThreads();
+            if (txtThreadUrl.Text.Length > 0)
+            {
+                currentThread = new Thread(txtThreadUrl.Text);
+                tSecond.Start();
+                ExecuteAllThreads();
+            }
+            else
+            {
+                tsappStatus.Text = "Please enter a thread URL";
+            }
         }
 
         private void btnShowDownloaders_Click(object sender, EventArgs e)
